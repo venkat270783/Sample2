@@ -79,8 +79,16 @@ public class Demo {
 	private static void readStockInfo(String stockName) throws MalformedURLException, IOException {
 		StringBuffer urlString = new StringBuffer();
 		urlString.append("https://nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=");
+		
+		if(stockName.contains("&")) {
+			//System.out.println("this is the stock");
+			stockName = stockName.replace("&", "%26");
+			//System.out.println(stockName);
+		}
 		urlString.append(stockName);
+		
 		urlString.append("&illiquid=0&smeFlag=0&itpFlag=0");
+		System.out.println(urlString.toString());
 		URL url = new URL(urlString.toString());
 		URLConnection urlConn = url.openConnection();
 		urlConn.setRequestProperty("Content-Type", "text/html");
@@ -95,6 +103,7 @@ public class Demo {
 		String symbol = "not found";
 		String pChange = "not found";
 		String totalTradedVolume = "not found";
+		
 		while (line != null) {
 			if (line.contains("\"lastPrice\":")) {
 				price = findPrices(line, "\"lastPrice\":");
@@ -110,6 +119,9 @@ public class Demo {
 			}
 			if (line.contains("\"symbol\":")) {
 				symbol = findName(line, "\"symbol\":");
+				if(symbol.contains("&amp;")) {
+					symbol = symbol.replace("&amp;", "&");
+				}
 			}
 			if (line.contains("\"pChange\":")) {
 				pChange = findPrices(line, "\"pChange\":");
@@ -117,6 +129,9 @@ public class Demo {
 			if (line.contains("\"totalTradedVolume\":")) {
 				totalTradedVolume = findVolume(line);
 			}
+			
+			
+			
 			line = buff.readLine();
 		}
 		
