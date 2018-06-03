@@ -88,7 +88,7 @@ public class Demo {
 		urlString.append(stockName);
 		
 		urlString.append("&illiquid=0&smeFlag=0&itpFlag=0");
-		System.out.println(urlString.toString());
+		//System.out.println(urlString.toString());
 		URL url = new URL(urlString.toString());
 		URLConnection urlConn = url.openConnection();
 		urlConn.setRequestProperty("Content-Type", "text/html");
