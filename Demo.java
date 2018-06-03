@@ -24,7 +24,7 @@ public class Demo {
 	public static void main(String[] args) throws IOException {
 
 		loadStocks();
-		System.out.println(stocks.size());
+		//System.out.println(stocks.size());
 		deleteFile();
 		createFileWIthDate();
 		Iterator<String> stocksIterator = stocks.iterator();
@@ -49,7 +49,7 @@ public class Demo {
 		String fileName = fileNameWithDate();
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-			out.write("symbol\tcompanyName\tprice\tOpenPrice\tPrClose\tChange\ttotalTradedVolume\n");
+			out.write("symbol\tcompanyName\tprice\tOpenPrice\tPrClose\tpChange\ttotalTradedVolume\n");
 			out.close();
 		} catch (IOException e) {
 			System.out.println("Exception Occurred" + e);
@@ -93,7 +93,7 @@ public class Demo {
 		String OpenPrice = "not found";
 		String companyName = "not found";
 		String symbol = "not found";
-		String change = "not found";
+		String pChange = "not found";
 		String totalTradedVolume = "not found";
 		while (line != null) {
 			if (line.contains("\"lastPrice\":")) {
@@ -111,8 +111,8 @@ public class Demo {
 			if (line.contains("\"symbol\":")) {
 				symbol = findName(line, "\"symbol\":");
 			}
-			if (line.contains("\"change\":")) {
-				change = findPrices(line, "\"change\":");
+			if (line.contains("\"pChange\":")) {
+				pChange = findPrices(line, "\"pChange\":");
 			}
 			if (line.contains("\"totalTradedVolume\":")) {
 				totalTradedVolume = findVolume(line);
@@ -120,7 +120,7 @@ public class Demo {
 			line = buff.readLine();
 		}
 		
-		String appendStr = symbol + "\t" + companyName + "\t" + price + "\t" + OpenPrice + "\t" + PrClose+"\t"+change+"\t"+totalTradedVolume+"\n";
+		String appendStr = symbol + "\t" + companyName + "\t" + price + "\t" + OpenPrice + "\t" + PrClose+"\t"+pChange+"\t"+totalTradedVolume+"\n";
 		appendStrToFile(fileNameWithDate(),appendStr);
 	}
 
@@ -138,7 +138,7 @@ public class Demo {
 			end++;
 		}
 
-		volume = line.substring(start + 1, end - 1);
+		volume = line.substring(start + 1, end);
 		
 		return volume;
 	}
