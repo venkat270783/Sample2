@@ -28,8 +28,10 @@ public class Demo {
 		deleteFile();
 		createFileWIthDate();
 		Iterator<String> stocksIterator = stocks.iterator();
-		while (stocksIterator.hasNext()) {
+		int howManyCompleted = 0;
+		while (stocksIterator.hasNext()) {			
 			readStockInfo(stocksIterator.next());
+			System.out.println(++howManyCompleted+ " stock completed out of " + stocks.size() + " and "+(stocks.size() - howManyCompleted)+" remaining");
 		}
 
 	}
@@ -47,7 +49,7 @@ public class Demo {
 		String fileName = fileNameWithDate();
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-			out.write("symbol\tcompanyName\tprice\tOpenPrice\tPrClose\n");
+			out.write("symbol\tcompanyName\tprice\tOpenPrice\tPrClose\tChange\ttotalTradedVolume\n");
 			out.close();
 		} catch (IOException e) {
 			System.out.println("Exception Occurred" + e);
@@ -91,6 +93,8 @@ public class Demo {
 		String OpenPrice = "not found";
 		String companyName = "not found";
 		String symbol = "not found";
+		String change = "not found";
+		String totalTradedVolume = "not found";
 		while (line != null) {
 			if (line.contains("\"lastPrice\":")) {
 				price = findPrices(line, "\"lastPrice\":");
@@ -107,18 +111,36 @@ public class Demo {
 			if (line.contains("\"symbol\":")) {
 				symbol = findName(line, "\"symbol\":");
 			}
-
+			if (line.contains("\"change\":")) {
+				change = findPrices(line, "\"change\":");
+			}
+			if (line.contains("\"totalTradedVolume\":")) {
+				totalTradedVolume = findVolume(line);
+			}
 			line = buff.readLine();
 		}
-		/*
-		 * System.out.println("Last Traded Price: " + price);
-		 * System.out.println("Pr Close Price: " + PrClose);
-		 * System.out.println("Open Price: " + OpenPrice);
-		 * System.out.println("Company Name: " + companyName);
-		 * System.out.println("Symbol: " + symbol);
-		 */
-		String appendStr = symbol + "\t" + companyName + "\t" + price + "\t" + OpenPrice + "\t" + PrClose+"\n";
+		
+		String appendStr = symbol + "\t" + companyName + "\t" + price + "\t" + OpenPrice + "\t" + PrClose+"\t"+change+"\t"+totalTradedVolume+"\n";
 		appendStrToFile(fileNameWithDate(),appendStr);
+	}
+
+	private static String findVolume(String line) {
+		String volume;
+		String findString = "\"totalTradedVolume\":";
+		int target = line.indexOf(findString);
+		int commaLocation = line.indexOf(",", target);
+		int start = commaLocation;
+		while (line.charAt(start) != '\"') {
+			start--;
+		}
+		int end = commaLocation + 1;
+		while (line.charAt(end) != '\"') {
+			end++;
+		}
+
+		volume = line.substring(start + 1, end - 1);
+		
+		return volume;
 	}
 
 	public static void appendStrToFile(String fileName, String str) {
